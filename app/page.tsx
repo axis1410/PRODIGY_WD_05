@@ -1,6 +1,7 @@
 "use client";
 
 import LocationInput from "@/components/LocationInput";
+import OtherData from "@/components/OtherData";
 import { WeatherCard } from "@/components/WeatherCard";
 import { airQualityLevel } from "@/utils/airQualityLevel";
 import { defaultWeather } from "@/utils/defaultWeather";
@@ -74,6 +75,7 @@ export default function Home() {
             isCelcius={isCelcius}
             currentTime={currentTime}
           />
+          <OtherData airQualityText={airQualityText} />
         </div>
       ) : (
         <div className={`text-5xl text-center text-white`}>
