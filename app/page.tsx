@@ -5,6 +5,7 @@ import OtherData from "@/components/OtherData";
 import { WeatherCard } from "@/components/WeatherCard";
 import { airQualityLevel } from "@/utils/airQualityLevel";
 import { defaultWeather } from "@/utils/defaultWeather";
+import { parseRequestBody } from "@/utils/parseRequestBody";
 import axios, { AxiosError } from "axios";
 import { FormEvent, useState } from "react";
 
@@ -21,10 +22,10 @@ export default function Home() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const requestLocation = parseRequestBody(location);
+
     await axios
-      .get(
-        `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location.toString()}&aqi=yes`
-      )
+      .get(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${requestLocation}&aqi=yes`)
       .then(async (res) => {
         const data = res.data;
         const airQuality = airQualityLevel(data?.current.air_quality["us-epa-index"]);
@@ -34,8 +35,6 @@ export default function Home() {
         setWeatherData(data);
       })
       .catch((err: AxiosError) => {
-        // console.log(err.response?.data.error.code);
-
         // @ts-ignore
         if (err.response?.data.error.code === 1003) {
           setErrorMessage("Please provide an input");
