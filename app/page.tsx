@@ -5,7 +5,7 @@ import OtherData from "@/components/OtherData";
 import { WeatherCard } from "@/components/WeatherCard";
 import { airQualityLevel } from "@/utils/airQualityLevel";
 import { defaultWeather } from "@/utils/defaultWeather";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { FormEvent, useState } from "react";
 
 export default function Home() {
@@ -13,6 +13,7 @@ export default function Home() {
   const [location, setLocation] = useState("");
   const [isCelcius, setIsCelcius] = useState(true);
   const [currentTime, setCurrentTime] = useState("");
+  const [errorMessage, setErrorMessage] = useState("Waiting for input");
   const [airQualityText, setAirQualityText] = useState("");
 
   const apiKey = process.env.WEATHER_API_KEY;
@@ -32,13 +33,14 @@ export default function Home() {
         setCurrentTime(data?.location.localtime.toString().slice(11));
         setWeatherData(data);
       })
-      .catch((err) => {
-        throw new Error(err);
+      .catch((err: AxiosError) => {
+        // @ts-ignore
+        setErrorMessage(err.response?.data.error.message);
       });
   };
 
   const handleChangeUnits = () => {
-    setIsCelcius(!isCelcius);
+    setIsCelcius((prev) => !prev);
   };
 
   return (
@@ -62,10 +64,12 @@ export default function Home() {
           <OtherData airQualityText={airQualityText} />
         </div>
       ) : (
-        <div className={`text-5xl text-center text-white`}>Waiting for input</div>
+        <div className={`text-5xl text-center text-white`}>{errorMessage}</div>
       )}
       <button
-        className="fixed bottom-0 right-0 sm:h-20 sm:w-20 h-10 w-10 rounded-full sm:m-10 m-4 bg-black hover:bg-gray-900 text-white text-lg sm:text-3xl"
+        type="button"
+        className="fixed bottom-0 right-0 sm:h-20 sm:w-20 h-10 w-10 rounded-full sm:m-10 m-4 
+        bg-black hover:bg-gray-900 text-white text-lg sm:text-3xl"
         onClick={handleChangeUnits}
       >
         {isCelcius ? "C" : "F"}
