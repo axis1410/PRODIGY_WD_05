@@ -34,8 +34,15 @@ export default function Home() {
         setWeatherData(data);
       })
       .catch((err: AxiosError) => {
+        // console.log(err.response?.data.error.code);
+
         // @ts-ignore
-        setErrorMessage(err.response?.data.error.message);
+        if (err.response?.data.error.code === 1003) {
+          setErrorMessage("Please provide an input");
+        } else {
+          // @ts-ignore
+          setErrorMessage(err.response?.data.error.message);
+        }
       });
   };
 
