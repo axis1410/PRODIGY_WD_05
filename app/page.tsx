@@ -30,13 +30,16 @@ export default function Home() {
     const requestLocation = parseRequestBody(location);
 
     await axios
-      .get(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${requestLocation}&aqi=yes`)
+      .get("/api/weather", {
+        params: {
+          location: requestLocation,
+        },
+      })
       .then(async (res) => {
         const data = res.data;
-        const airQuality = airQualityLevel(data?.current.air_quality["us-epa-index"]);
-        // @ts-ignore
+        const airQuality = airQualityLevel(data?.current?.air_quality["us-epa-index"]);
         setAirQualityText(airQuality?.toString());
-        setCurrentTime(data?.location.localtime.toString().slice(11));
+        setCurrentTime(data?.location?.localtime.toString().slice(11));
         setWeatherData(data);
       })
       .catch((err: AxiosError) => {
